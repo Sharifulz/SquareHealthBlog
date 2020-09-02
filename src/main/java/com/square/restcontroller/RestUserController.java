@@ -53,7 +53,7 @@ public class RestUserController {
 		Map<String, Object> data = new HashMap<>();
 		ResponseEntity<Map<String,Object>> responseEntity = null;
 		
-		data = userService.saveUser(viewModel);
+		data = userService.saveUserFromApi(viewModel);
 				
 		if (data.get("responseCode").equals("412")) {
 			responseEntity = new ResponseEntity<Map<String,Object>>(data, HttpStatus.PRECONDITION_FAILED);
@@ -62,7 +62,7 @@ public class RestUserController {
 		}
 		return responseEntity;
 	}
-	
+	 
 	@GetMapping("/get_approved_posts")
 	public ResponseEntity<Map<String, Object>> getAllApprovedPost() {
 		

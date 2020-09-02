@@ -39,11 +39,19 @@ public class AdminController {
 	}
 	
 	@PostMapping("/admin/create")
-	public ModelAndView adminCreate(@ModelAttribute("user") UsersModel admin) {
+	public ModelAndView adminCreate(@ModelAttribute("admin") UsersModel admin) {
 		ModelAndView mv = new ModelAndView();
 		Map<String, Object> data = new HashMap<>();
+		System.out.println("------------------- CREATING ADMIN --------------------------- " + admin.getUserName() + " "+ admin.getFullName() +" " + admin.getPassword());
+		
+		data = userService.saveUser(admin, "ADMIN");
 		
 		mv.setViewName("admin");
+		mv.addObject("currentUser",  data.get("currentUser"));
+		mv.addObject("pendingUsers", data.get("pendingUsers"));
+		mv.addObject("approvedUsers", data.get("approvedUsers"));
+		mv.addObject("pendingBlogs", data.get("pendingBlogs"));
+		mv.addObject("approvedPosts", data.get("approvedPosts"));
 		
 		return mv;
 	}

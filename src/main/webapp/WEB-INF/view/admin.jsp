@@ -269,7 +269,7 @@ body {
 			<form action="/blog/create_by_admin" method="post">
 			  <div class="form-group">
 			    <label for="exampleInputEmail1">Status</label>
-			    <input type="text" class="form-control" placeholder="Username" name="description">
+			    <input type="text" class="form-control" placeholder="Username" name="description" required="required">
 			  </div>
 			  <button type="submit" class="btn btn-primary">Submit</button>
 			</form>
@@ -287,7 +287,9 @@ body {
 			<form action="/admin/create" method="post">
 			  <div class="form-group">
 			    <label for="exampleInputEmail1">Username</label>
-			    <input type="text" class="form-control" placeholder="Username" name="userName">
+			    <input type="text" class="form-control mb-1" placeholder="Username" name="userName" required="required">
+			    <input type="text" class="form-control mb-1" placeholder="Full Name" name="fullName" required="required">
+			    <input type="password" class="form-control mb-1" placeholder="Password" name="password" required="required">
 			  </div>
 			  <button type="submit" class="btn btn-primary">Submit</button>
 			</form>

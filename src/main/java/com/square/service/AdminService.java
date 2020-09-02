@@ -10,7 +10,9 @@ import org.springframework.stereotype.Service;
 
 import com.square.common.ICommonService;
 import com.square.dao.IBlogPostDao;
+import com.square.dao.ICommentDao;
 import com.square.dao.IUsersDao;
+import com.square.model.CommentsModel;
 import com.square.model.UsersModel;
 import com.square.payload.CommonRequestViewModel;
 
@@ -25,6 +27,9 @@ public class AdminService implements IAdminService {
 	
 	@Autowired
 	IBlogPostDao blogDao;
+	
+	@Autowired
+	ICommentDao commentsDao;
 	
 	@Override
 	public Map<String, Object> createNewAdmin(CommonRequestViewModel viewModel) {
@@ -210,9 +215,15 @@ public class AdminService implements IAdminService {
 		List<String> message = new ArrayList<>();
 		String userName = commonService.getCurrentUser();
 		UsersModel user = userDao.findByUserName(userName).get();
+		
 		if (user.getRoles().equals("ROLE_ADMIN")) {
 				if (viewModel.getIds()!=null || viewModel.getIds().length>0) {
 					for (String id : viewModel.getIds()) {
+						//--------- 1: Get all comment for this post and then remove all comment first
+						try {
+							commentsDao.deleteCorrespondingCommentsByPostId(Integer.parseInt(id));
+						} catch (Exception e) {e.printStackTrace();}
+						
 						try {
 							blogDao.removePost(Integer.valueOf(id));
 							message.add("Removed post, ID: "+id);

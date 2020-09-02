@@ -107,12 +107,22 @@ body {
 	</div>
 </div>
 
-	<h2 style="text-align: center;">Login User : ${currentUser.userName}</h2>
-	<h2 style="text-align: center;">User Role: ${currentUser.roles}</h2>
+<div class="container">
+	<div class="row p-2">
+		<div class="col-md-3"></div>
+		<div class="col-md-6">
+				<h2 style="text-align: right;"><i class="fa fa-user fa-1x mr-2"></i> ${currentUser.userName}</h2>
+				<h2 style="text-align: right;"><i class="fa fa-superpowers fa-1x mr-2"></i> ${currentUser.roles}</h2>
+		</div>
+		<div class="col-md-3"></div>
+	</div>
+</div>
+
+
 
 <c:forEach items="${messages}" var="message">
 	<div class="alert alert-primary" role="alert">
-  		Dear ${currentUser.fullName} , ${message}
+  		Dear ${currentUser.userName} , ${message}
 	</div>
 </c:forEach>
 
@@ -137,7 +147,7 @@ body {
 			    <label for="exampleInputEmail1">Status</label>
 			    <input type="text" class="form-control" placeholder="Type your post" name="description">
 			  </div>
-			  <button type="submit" class="btn btn-primary">Submit</button>
+			  <button type="submit" class="btn btn-primary">Submit <i class="fa fa-paper-plane ml-2"></i></button>
 			</form>
 		</div>
 		<div class="col-md-3"></div>
@@ -150,28 +160,30 @@ body {
 	<div class="row mb-2">
 		<div class="col-md-3"></div>
 		<div class="col-md-6">
-		<div class="card" style="width: 30rem;">
+		<div class="card" style="width: 34rem;">
 		  <i class="fa fa-twitter" style="font-size: 5rem; text-align: center"></i>
 		  <div class="card-body">
-		    <span class="card-title">User: ${approvedPost.userName}</span>
+		    <span class="card-title"><i class="fa fa-user mr-2"></i> ${approvedPost.userName}</span>
+		    <span class="card-title"><i class="fa fa-id-badge mr-2"></i>  ${approvedPost.id}</span>
+		    <span class="card-title"><i class="fa fa-calendar mr-2"></i>  ${approvedPost.postDate}</span>
 		    <h2>${approvedPost.description}</h2>
-		    <c:if test="${approvedPost.userName eq currentUser.userName}">  
-			   <span><a href="/blog/remove_by_user/${approvedPost.id}" class="btn btn-danger ml-5">Delete</a></span>  
-			</c:if>  
-		    <p class="card-text">${post.description}</p>
-		    <c:forEach items="${post.commentsList}" var="comments">
-				<p>Comments: ${comments.comments}</p>
+		   
+		    <c:forEach items="${approvedPost.commentsList}" var="comments">
+				<p><i class="fa fa-comments mr-2"></i> ${comments.comments}</p>
 			</c:forEach>
-		    <div style="text-align: center; margin-bottom: 10px;">
-		    	 <a href="#" class="btn btn-success"><i class="fa fa-thumbs-up" style="text-align: center">${post.likes}</i></a>
-			    <a href="#" class="btn btn-danger"><i class="fa fa-thumbs-down" style="text-align: center">${post.dislikes}</i></a>
-			    <a href="#" class="btn btn-warning"><i class="fa fa-comment" style="text-align: center">${post.comments}</i></a>
+		    <div style="text-align: right; margin-bottom: 10px;">
+		    	 <a href="/like/${approvedPost.id}" class="btn btn-dark"><i class="fa fa-thumbs-up" style="text-align: center">${approvedPost.likes}</i></a>
+			    <a href="/dislike/${approvedPost.id}" class="btn btn-dark"><i class="fa fa-thumbs-down" style="text-align: center">${approvedPost.dislikes}</i></a>
+			    <a href="#" class="btn btn-dark"><i class="fa fa-comment" style="text-align: center">${approvedPost.comments}</i></a>
+			     <c:if test="${approvedPost.userName eq currentUser.userName}">  
+			  	 <span><a href="/blog/remove_by_user/${approvedPost.id}" class="btn btn-danger"><i class="fa fa-trash" style="text-align: center"></i></a></span>  
+			</c:if>  
 		    </div>
-		    <form>
+		    <form action="/comment/comment_on_post/${approvedPost.id}" method="post">
 			  <div class="form-group">
-			    <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter your comment">
+			    <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter your comment" name="comments">
 			  </div>
-			  <button type="submit" class="btn btn-primary btn-block">Submit</button>
+				<button type="submit" class="btn btn-primary btn-block">Submit <i class="fa fa-paper-plane ml-2"></i></button>
 			</form>
 		  </div>
 		</div>

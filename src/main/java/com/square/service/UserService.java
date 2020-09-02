@@ -14,6 +14,7 @@ import com.square.common.ICommonService;
 import com.square.dao.IBlogPostDao;
 import com.square.dao.IUsersDao;
 import com.square.model.BlogPostModel;
+import com.square.model.CommentsModel;
 import com.square.model.UsersModel;
 import com.square.payload.CommonRequestViewModel;
 
@@ -38,7 +39,7 @@ public class UserService implements IUserService {
 		Map<String, Object> data = new HashMap<>();
 		Optional<UsersModel> user = null;
 		UsersModel currentUsersDetails = null;
-		List<BlogPostModel> approvedPosts = null;
+		List<BlogPostModel> approvedPosts = new ArrayList<>();
 		
 		//----------- Get Current User Details
 		try {
@@ -52,32 +53,96 @@ public class UserService implements IUserService {
 		//----------- Get all approved post
 		try {
 			approvedPosts = blogPostDao.findByIsApprovedTrueOrderByPostDateDesc();
-			if (approvedPosts!=null) {
+			if (approvedPosts!=null && approvedPosts.size()>0) {
+				
+				for (BlogPostModel blogPostModel : approvedPosts) {
+					for (CommentsModel comments : blogPostModel.getCommentsList()) {
+						System.out.println(comments.getComments() +" -----------------------------------");
+					}
+				}
+				
 				data.put("approvedPosts", approvedPosts);
-			}else { data.put("approvedPost", new ArrayList<>()); }
-		} catch (Exception e) {}
+			}else { data.put("approvedPosts", new ArrayList<>()); }
+		} catch (Exception e) {e.printStackTrace();}
 		 
 
 		return data;
 	}
 
+
 	@Override
-	public Map<String, Object> saveUser(UsersModel unsavedUser) {
+	public Map<String, Object> saveUser(UsersModel unsavedUser, String roleType) {
 		Map<String, Object> data = new HashMap<>();
 		List<String> message = new ArrayList<>();
 		List<String> errorMessage = new ArrayList<>();
 		List<BlogPostModel> approvedPosts = null;
 		UsersModel savedUser = null;
-		String pwd = null;
+		//String pwd = null;
+		System.out.println("SAVING USER ------------------- >Username: "+ unsavedUser.getUserName() + " Full Name "+ unsavedUser.getFullName() +" Password : " + unsavedUser.getPassword());
+		String userName = commonService.getCurrentUser();
+		UsersModel currentUser = null;
+		boolean isUserFound = true;
+		if (userName.equalsIgnoreCase("anonymousUser")) {
+			//------------ Do not call for user
+			isUserFound = false;
+		}else {
+			currentUser = userDao.findByUserName(userName).get();
+		}
 		
-		if (unsavedUser.getUserName()!=null) {
+		System.out.println("----------------------- What is current users userName "+ userName);
+		
+		
+		if (unsavedUser.getUserName()!=null && isUserFound) {
 			//--------- Check if this username already exists?
 			Optional<UsersModel> alreadyEsistsUser = userDao.findByUserName(unsavedUser.getUserName());
 			if (alreadyEsistsUser.isPresent()) {
 				errorMessage.add("Sorry, this user already exist, please try unique username...");
 			}else {
 				//pwd = commonService.encodeString(unsavedUser.getPassword(), "sqr");
-				
+				if (currentUser.getRoles().equalsIgnoreCase("ROLE_ADMIN")) {
+					if (roleType.equalsIgnoreCase("USER")) {
+						unsavedUser.setActive(false);
+						unsavedUser.setRoles("ROLE_USER");
+						unsavedUser.setPassword(unsavedUser.getPassword());
+						unsavedUser.setSignupDate(new Date(System.currentTimeMillis()));
+					}else if (roleType.equalsIgnoreCase("ADMIN")) {
+						unsavedUser.setActive(true);
+						unsavedUser.setRoles("ROLE_ADMIN");
+						unsavedUser.setPassword(unsavedUser.getPassword());
+						unsavedUser.setSignupDate(new Date(System.currentTimeMillis()));
+					}
+					try {
+						savedUser = userDao.save(unsavedUser);
+						data.put("savedUser", savedUser);
+						message.add("Your reagistration is on progress, please wait for admin approval...");
+					} catch (Exception e) {e.printStackTrace();}
+					//----------- add currentUser pendingUsers approvedUsers pendingBlogs approvedPosts for admin
+					List<UsersModel> pendingUsers = (List<UsersModel>) userDao.findByRolesAndActiveFalseOrderBySignupDate("ROLE_USER");
+					List<UsersModel> approvedUsers = (List<UsersModel>) userDao.findByRolesAndActiveTrueOrderBySignupDate("ROLE_USER");
+					List<BlogPostModel> pendingBlogs = blogPostDao.findByIsApprovedFalseOrderByPostDateDesc();
+					data.put("currentUser", currentUser);
+					data.put("pendingUsers", pendingUsers);
+					data.put("approvedUsers", approvedUsers);
+					data.put("pendingBlogs", pendingBlogs);
+					
+				}else if(currentUser.getRoles().equalsIgnoreCase("ROLE_USER")) {
+					unsavedUser.setActive(false);
+					unsavedUser.setRoles("ROLE_USER");
+					unsavedUser.setPassword(unsavedUser.getPassword());
+					unsavedUser.setSignupDate(new Date(System.currentTimeMillis()));
+					
+					try {
+						savedUser = userDao.save(unsavedUser);
+						data.put("savedUser", savedUser);
+						message.add("Your reagistration is on progress, please wait for admin approval...");
+					} catch (Exception e) {e.printStackTrace();}
+				}
+			}
+		}else {
+			Optional<UsersModel> alreadyEsistsUser = userDao.findByUserName(unsavedUser.getUserName());
+			if (alreadyEsistsUser.isPresent()) {
+				errorMessage.add("Sorry, this user already exist, please try unique username...");
+			}else {
 				unsavedUser.setActive(false);
 				unsavedUser.setRoles("ROLE_USER");
 				unsavedUser.setPassword(unsavedUser.getPassword());
@@ -156,7 +221,7 @@ public class UserService implements IUserService {
 	}
 
 	@Override
-	public Map<String, Object> saveUser(CommonRequestViewModel viewModel) {
+	public Map<String, Object> saveUserFromApi(CommonRequestViewModel viewModel) {
 		Map<String, Object> data = new HashMap<>();
 		List<String> message = new ArrayList<>();
 		UsersModel currentUser = null;

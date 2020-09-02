@@ -9,7 +9,7 @@ public interface IUserService {
 
 	public Map<String, Object> getCurrentUserDetails(String userName);
 	
-	public Map<String, Object> saveUser(UsersModel user);
+	public Map<String, Object> saveUser(UsersModel user, String roleType);
 	
 	public Map<String, Object> getAllDataForAdmin(); 
 	
@@ -18,7 +18,7 @@ public interface IUserService {
 	public Map<String, Object> deleteUser(int id); 
 	
 	//---------- For API
-	public Map<String, Object> saveUser(CommonRequestViewModel viewModel);
+	public Map<String, Object> saveUserFromApi(CommonRequestViewModel viewModel);
 	
 	
 }
