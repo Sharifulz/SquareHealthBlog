@@ -7,7 +7,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Bootstrap Elegant Modal Login Modal Form with Icons</title>
+<title>User Page</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto|Varela+Round">
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -107,6 +107,9 @@ body {
 	</div>
 </div>
 
+	<h2 style="text-align: center;">Login User : ${currentUser.userName}</h2>
+	<h2 style="text-align: center;">User Role: ${currentUser.roles}</h2>
+
 <c:forEach items="${messages}" var="message">
 	<div class="alert alert-primary" role="alert">
   		Dear ${currentUser.fullName} , ${message}
@@ -125,13 +128,22 @@ body {
 	</div>
 </c:forEach>
 <!-- ==================================================== -->
-	<form action="/blog/create_by_user" method="post">
-  <div class="form-group">
-    <label for="exampleInputEmail1">Status</label>
-    <input type="text" class="form-control" placeholder="Username" name="description">
-  </div>
-  <button type="submit" class="btn btn-primary">Submit</button>
-</form>
+<div class="container">
+	<div class="row mb-2">
+		<div class="col-md-3"></div>
+		<div class="col-md-6">
+			<form action="/blog/create_by_user" method="post">
+			  <div class="form-group">
+			    <label for="exampleInputEmail1">Status</label>
+			    <input type="text" class="form-control" placeholder="Type your post" name="description">
+			  </div>
+			  <button type="submit" class="btn btn-primary">Submit</button>
+			</form>
+		</div>
+		<div class="col-md-3"></div>
+	</div>
+</div>
+	
 
 <div class="container">
 <c:forEach items="${approvedPosts}" var="approvedPost">

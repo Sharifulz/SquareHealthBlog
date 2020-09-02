@@ -48,8 +48,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter{
 			.antMatchers("/authenticate","/").permitAll()
 			.antMatchers("/admin", "/user/delete/{id}", "/user/approve/{id}","/user/block/{id}", "/blog/approve/{id}"
 					,"/blog/remove/{id}", "/blog/create_by_admin").hasRole("ADMIN")
-			.antMatchers("/user", "/blog/create_by_user").hasAnyRole("ADMIN", "USER")
-			.antMatchers("/blog/remove_by_user/{id}").hasAnyRole("USER")
+			.antMatchers("/user", "/blog/create_by_user","/blog/remove_by_user/{id}").hasAnyRole("ADMIN", "USER")
+			.antMatchers("/user/add").permitAll()
 			.anyRequest()
             .authenticated()
             .and()

@@ -15,6 +15,7 @@ import com.square.dao.IBlogPostDao;
 import com.square.dao.IUsersDao;
 import com.square.model.BlogPostModel;
 import com.square.model.UsersModel;
+import com.square.payload.CommonRequestViewModel;
 
 @Service
 public class UserService implements IUserService {
@@ -27,6 +28,9 @@ public class UserService implements IUserService {
 	
 	@Autowired
 	ICommonService commonService;
+	
+	@Autowired
+	IAdminService adminService;
 	
 	@Override
 	public Map<String, Object> getCurrentUserDetails(String userName) {
@@ -72,11 +76,11 @@ public class UserService implements IUserService {
 			if (alreadyEsistsUser.isPresent()) {
 				errorMessage.add("Sorry, this user already exist, please try unique username...");
 			}else {
-				pwd = commonService.encodeString(unsavedUser.getPassword(), "sqr");
+				//pwd = commonService.encodeString(unsavedUser.getPassword(), "sqr");
 				
 				unsavedUser.setActive(false);
 				unsavedUser.setRoles("ROLE_USER");
-				unsavedUser.setPassword(pwd);
+				unsavedUser.setPassword(unsavedUser.getPassword());
 				unsavedUser.setSignupDate(new Date(System.currentTimeMillis()));
 				
 				try {
@@ -109,7 +113,12 @@ public class UserService implements IUserService {
 		List<UsersModel> approvedUsers = (List<UsersModel>) userDao.findByRolesAndActiveTrueOrderBySignupDate("ROLE_USER");
 		List<BlogPostModel> pendingBlogs = blogPostDao.findByIsApprovedFalseOrderByPostDateDesc();
 		List<BlogPostModel> approvedPosts = blogPostDao.findByIsApprovedTrueOrderByPostDateDesc();
+		UsersModel user = null;
 		
+		String userName = commonService.getCurrentUser();
+		user = userDao.findByUserName(userName).get();
+		
+		data.put("currentUser", user);
 		data.put("pendingUsers", pendingUsers);
 		data.put("approvedUsers", approvedUsers);
 		data.put("pendingBlogs", pendingBlogs);
@@ -145,6 +154,58 @@ public class UserService implements IUserService {
 
 		return data;
 	}
+
+	@Override
+	public Map<String, Object> saveUser(CommonRequestViewModel viewModel) {
+		Map<String, Object> data = new HashMap<>();
+		List<String> message = new ArrayList<>();
+		UsersModel currentUser = null;
+		UsersModel newUser = null;
+		
+		String userName = commonService.getCurrentUser();
+		currentUser = userDao.findByUserName(userName).get();
+		
+		Map<String, Object> map = adminService.validateViewModelDataToCreateAdmin(viewModel);
+		
+		if (map.get("isValid").equals(true)) {
+			//------------Ready to save
+			UsersModel newUsers = new UsersModel();
+			newUsers.setUserName(viewModel.getUserName());
+			newUsers.setFullName(viewModel.getPersonName());
+			newUsers.setPassword(viewModel.getPassword());
+			newUsers.setRoles("ROLE_USER");
+			
+			if (currentUser.getRoles().equalsIgnoreCase("ROLE_ADMIN")) {
+				newUsers.setActive(true);
+			}else if(currentUser.getRoles().equalsIgnoreCase("ROLE_USER")) {
+				newUsers.setActive(false);
+			}
+			
+			try {
+				newUser = userDao.save(newUsers);
+				message.add("New user created.");
+				data.put("data", newUser);
+				data.put("message", message);
+				data.put("responseCode", "200");
+			} catch (Exception e) {
+				message.add("Failed to get approved post "+ e.getLocalizedMessage());
+				data.put("result", "failure");
+				data.put("data", "");
+				data.put("message", message);
+				data.put("responseCode", "412");
+			}
+			
+			
+		}else {
+			message.add("Invalid data format, not all required field found");
+			data.put("data", "");
+			data.put("message", map.get("message"));
+			data.put("responseCode", "412");
+		}
+		
+		return data;
+	}
+	
 
 
 }

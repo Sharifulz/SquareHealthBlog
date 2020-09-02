@@ -109,6 +109,9 @@ body {
 	</div>
 </div>
 
+<h2 style="text-align: center;">Login User : ${currentUser.userName}</h2>
+<h2 style="text-align: center;">User Role: ${currentUser.roles}</h2>
+	
 <c:forEach items="${messages}" var="message">
 	<div class="alert alert-primary" role="alert">
   		Dear ${currentUser.fullName} , ${message}
@@ -128,117 +131,171 @@ body {
 </c:forEach>
 
 <h3 style="color:blue;">Privilege 1 : Pending User</h3>
-<table class="table">
-  <thead>
-    <tr>
-      <th scope="col">Username</th>
-      <th scope="col">Full Name</th>
-      <th scope="col">Request Date</th>
-      <th scope="col">Activate</th>
-       <th scope="col">Delete</th>
-    </tr>
-  </thead>
-  <tbody>
-      <c:forEach items="${pendingUsers}" var="pendingUser">
-               <tr>
-                <th scope="row">${pendingUser.userName}</th>
-                <td>${pendingUser.fullName}</td>
-                <td>${pendingUser.signupDate}</td>
-                <td><a href="/user/approve/${pendingUser.id}" class="badge badge-dark" style="padding: 15px;">Activate</a></td>
-                <td><a href="/user/delete/${pendingUser.id}" class="badge badge-danger" style="padding: 15px;">Delete</a></td>
-              </tr>
-      </c:forEach>
-  </tbody>
-</table>
-
-<h3 style="color:blue;">Privilege 1 : Approved User</h3>
-<table class="table">
-  <thead>
-    <tr>
-      <th scope="col">Username</th>
-      <th scope="col">Full Name</th>
-      <th scope="col">Request Date</th>
-      <th scope="col">Activate</th>
-       <th scope="col">Delete</th>
-    </tr>
-  </thead>
-  <tbody>
-      <c:forEach items="${approvedUsers}" var="approvedUser">
-               <tr>
-                <th scope="row">${approvedUser.userName}</th>
-                <td>${approvedUser.fullName}</td>
-                <td>${approvedUser.signupDate}</td>
-                <td><a href="/user/block/${approvedUser.id}" class="badge badge-dark" style="padding: 15px;">Block</a></td>
-                <td><a href="/user/delete/${approvedUser.id}" class="badge badge-danger" style="padding: 15px;">Delete</a></td>
-              </tr>
-      </c:forEach>
-  </tbody>
-</table>
-
-<h3 style="color:blue;">Privilege 2 : Pending Posts</h3>
-<table class="table">
-  <thead>
-    <tr>
-      <th scope="col">Username</th>
-      <th scope="col">Post Description</th>
-      <th scope="col">Post Date</th>
-      <th scope="col">Action</th>
-    </tr>
-  </thead>
-  <tbody>    
-      <c:forEach items="${pendingBlogs}" var="pendingBlog">
-               <tr>
-                <th scope="row">${pendingBlog.userName}</th>
-                <td>${pendingBlog.description}</td>
-                <td>${pendingBlog.postDate}</td>
-                <td><a href="/blog/approve/${pendingBlog.id}" class="badge badge-dark" style="padding: 15px;">Approve</a></td>
-              </tr>
-      </c:forEach>
-  </tbody>
-</table>
-
-<h3 style="color:blue;">Privilege 3 : Approved Posts</h3>
-<table class="table">
-  <thead>
-    <tr>
-      <th scope="col">Username</th>
-      <th scope="col">Post Description</th>
-      <th scope="col">Post Date</th>
-      <th scope="col">Action</th>
-    </tr>
-  </thead>
-  <tbody>    
-      <c:forEach items="${approvedPosts}" var="approvedPost">
-               <tr>
-                <th scope="row">${approvedPost.userName}</th>
-                <td>${approvedPost.description}</td>
-                <td>${approvedPost.postDate}</td>
-                <td><a href="/blog/remove/${approvedPost.id}" class="badge badge-danger" style="padding: 15px;">Remove</a></td>
-              </tr>
-      </c:forEach>
-  </tbody>
-</table>
-
-<h3 style="color:blue;">Privilege 4 : Create Blog</h3>
-
-<form action="/blog/create_by_admin" method="post">
-  <div class="form-group">
-    <label for="exampleInputEmail1">Status</label>
-    <input type="text" class="form-control" placeholder="Username" name="description">
-  </div>
-  <button type="submit" class="btn btn-primary">Submit</button>
-</form>
+<div class="container">
+	<div class="row p-2 mb-2">
+		<div class="col-md-3"></div>
+		<div class="col-md-6">
+			<table class="table">
+			  <thead>
+			    <tr>
+			      <th scope="col">Username</th>
+			      <th scope="col">Full Name</th>
+			      <th scope="col">Request Date</th>
+			      <th scope="col">Activate</th>
+			       <th scope="col">Delete</th>
+			    </tr>
+			  </thead>
+			  <tbody>
+			      <c:forEach items="${pendingUsers}" var="pendingUser">
+			               <tr>
+			                <th scope="row">${pendingUser.userName}</th>
+			                <td>${pendingUser.fullName}</td>
+			                <td>${pendingUser.signupDate}</td>
+			                <td><a href="/user/approve/${pendingUser.id}" class="badge badge-dark" style="padding: 15px;">Activate</a></td>
+			                <td><a href="/user/delete/${pendingUser.id}" class="badge badge-danger" style="padding: 15px;">Delete</a></td>
+			              </tr>
+			      </c:forEach>
+			  </tbody>
+			</table>
+		</div>
+		<div class="col-md-3"></div>
+	</div>
+</div>
 
 
-<h3 style="color:blue;">Privilege 4 : Create Admin</h3>
+<h3 style="color:blue;">Privilege 2 : Approved User</h3>
+<div class="container">
+	<div class="row p-2 mb-2">
+		<div class="col-md-3"></div>
+		<div class="col-md-6">
+			<table class="table">
+			  <thead>
+			    <tr>
+			      <th scope="col">Username</th>
+			      <th scope="col">Full Name</th>
+			      <th scope="col">Request Date</th>
+			      <th scope="col">Activate</th>
+			       <th scope="col">Delete</th>
+			    </tr>
+			  </thead>
+			  <tbody>
+			      <c:forEach items="${approvedUsers}" var="approvedUser">
+			               <tr>
+			                <th scope="row">${approvedUser.userName}</th>
+			                <td>${approvedUser.fullName}</td>
+			                <td>${approvedUser.signupDate}</td>
+			                <td><a href="/user/block/${approvedUser.id}" class="badge badge-dark" style="padding: 15px;">Block</a></td>
+			                <td><a href="/user/delete/${approvedUser.id}" class="badge badge-danger" style="padding: 15px;">Delete</a></td>
+			              </tr>
+			      </c:forEach>
+			  </tbody>
+			</table>
+		</div>
+		<div class="col-md-3"></div>
+	</div>
+</div>
 
-<form action="/admin/create" method="post">
-  <div class="form-group">
-    <label for="exampleInputEmail1">Username</label>
-    <input type="text" class="form-control" placeholder="Username" name="userName">
-  </div>
-  <button type="submit" class="btn btn-primary">Submit</button>
-</form>
+
+<h3 style="color:blue;">Privilege 3 : Pending Posts</h3>
+<div class="container">
+	<div class="row p-2 mb-2">
+		<div class="col-md-3"></div>
+		<div class="col-md-6">
+			<table class="table">
+			  <thead>
+			    <tr>
+			      <th scope="col">Username</th>
+			      <th scope="col">Post Description</th>
+			      <th scope="col">Post Date</th>
+			      <th scope="col">Action</th>
+			    </tr>
+			  </thead>
+			  <tbody>    
+			      <c:forEach items="${pendingBlogs}" var="pendingBlog">
+			               <tr>
+			                <th scope="row">${pendingBlog.userName}</th>
+			                <td>${pendingBlog.description}</td>
+			                <td>${pendingBlog.postDate}</td>
+			                <td><a href="/blog/approve/${pendingBlog.id}" class="badge badge-dark" style="padding: 15px;">Approve</a></td>
+			              </tr>
+			      </c:forEach>
+			  </tbody>
+			</table>
+		</div>
+		<div class="col-md-3"></div>
+	</div>
+</div>
+
+
+<h3 style="color:blue;">Privilege 4 : Approved Posts</h3>
+<div class="container">
+	<div class="row p-2 mb-2">
+		<div class="col-md-3"></div>
+		<div class="col-md-6">
+			<table class="table">
+			  <thead>
+			    <tr>
+			      <th scope="col">Username</th>
+			      <th scope="col">Post Description</th>
+			      <th scope="col">Post Date</th>
+			      <th scope="col">Action</th>
+			    </tr>
+			  </thead>
+			  <tbody>    
+			      <c:forEach items="${approvedPosts}" var="approvedPost">
+			               <tr>
+			                <th scope="row">${approvedPost.userName}</th>
+			                <td>${approvedPost.description}</td>
+			                <td>${approvedPost.postDate}</td>
+			                <td><a href="/blog/remove/${approvedPost.id}" class="badge badge-danger" style="padding: 15px;">Remove</a></td>
+			              </tr>
+			      </c:forEach>
+			  </tbody>
+			</table>
+		</div>
+		<div class="col-md-3"></div>
+	</div>
+</div>
+
+
+
+
+<!-- ========== FRO INSERT POST==================== -->
+<h3 style="color:blue;">Privilege 5 : Create Blog</h3>
+<div class="container">
+	<div class="row p-2 mb-2">
+		<div class="col-md-3"></div>
+		<div class="col-md-6">
+			<form action="/blog/create_by_admin" method="post">
+			  <div class="form-group">
+			    <label for="exampleInputEmail1">Status</label>
+			    <input type="text" class="form-control" placeholder="Username" name="description">
+			  </div>
+			  <button type="submit" class="btn btn-primary">Submit</button>
+			</form>
+		</div>
+		<div class="col-md-3"></div>
+	</div>
+</div>
+
+<!-- ========== FRO CREATE ADMIN==================== -->
+<h3 style="color:blue;">Privilege 6 : Create Admin</h3>
+<div class="container">
+	<div class="row p-2 mb-2">
+		<div class="col-md-3"></div>
+		<div class="col-md-6">
+			<form action="/admin/create" method="post">
+			  <div class="form-group">
+			    <label for="exampleInputEmail1">Username</label>
+			    <input type="text" class="form-control" placeholder="Username" name="userName">
+			  </div>
+			  <button type="submit" class="btn btn-primary">Submit</button>
+			</form>
+		</div>
+		<div class="col-md-3"></div>
+	</div>
+</div>
+
     
 </body>
 </html>

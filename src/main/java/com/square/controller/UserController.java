@@ -39,7 +39,7 @@ public class UserController {
 	
 	@PostMapping("/user/add")
 	public ModelAndView addUser(@ModelAttribute("user") UsersModel user) {
-		
+		System.out.println("Inside user register");
 		ModelAndView mv  = new ModelAndView();
 		Map<String, Object> data = new HashMap<>();
 		

@@ -37,9 +37,9 @@ public class RestHomeController {
 	public ResponseEntity<?> createAuthenticationToken(@RequestBody AuthenticationRequest authReqViewModel) throws Exception {
 		
 		try {
-			String password = commonService.decodeString(authReqViewModel.getPassword(), "");
+			//String password = commonService.decodeString(authReqViewModel.getPassword(), "");
 			authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-					authReqViewModel.getUserName(), password));
+					authReqViewModel.getUserName(), authReqViewModel.getPassword()));
 		} catch (BadCredentialsException e) {
 			throw new Exception("Incorrect username or password given ----->" + e);
 		}

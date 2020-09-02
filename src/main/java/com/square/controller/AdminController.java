@@ -28,6 +28,7 @@ public class AdminController {
 		data = userService.getAllDataForAdmin();
 		
 		mv.setViewName("admin");
+		mv.addObject("currentUser",  data.get("currentUser"));
 		mv.addObject("pendingUsers", data.get("pendingUsers"));
 		mv.addObject("approvedUsers", data.get("approvedUsers"));
 		mv.addObject("pendingBlogs", data.get("pendingBlogs"));

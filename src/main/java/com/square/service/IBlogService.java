@@ -16,6 +16,7 @@ public interface IBlogService {
 	//--------- FOR API
 	public Map<String, Object> removePost(CommonRequestViewModel viewModel);
 	public Map<String, Object> savePost(CommonRequestViewModel viewModel);
+	public Map<String, Object> likesDislikes(CommonRequestViewModel viewModel, String reactionType);
 	
 	
 }

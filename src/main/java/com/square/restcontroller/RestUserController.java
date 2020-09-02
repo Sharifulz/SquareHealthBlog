@@ -12,11 +12,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.square.common.ICommonService;
-import com.square.model.BlogPostModel;
 import com.square.payload.CommonRequestViewModel;
 import com.square.service.IBlogService;
 import com.square.service.ICommentsService;
+import com.square.service.IUserService;
 
 @RestController
 @RequestMapping("/blogger_api")
@@ -27,6 +26,9 @@ public class RestUserController {
 	
 	@Autowired
 	ICommentsService commentService;
+	
+	@Autowired
+	IUserService userService;
 	/*-----------
 	Top Features: 
 	
@@ -40,9 +42,26 @@ public class RestUserController {
 	
 	Publish post sending for approval [DONE]
 	
-	Like, dislike
+	Like, dislike [DONE]
 	
 	*/
+	
+	//------ Required body  post id :: {"ids":[1]}
+	@PostMapping("/register_user")
+	public ResponseEntity<Map<String, Object>> registerUser(@RequestBody CommonRequestViewModel viewModel) {
+		
+		Map<String, Object> data = new HashMap<>();
+		ResponseEntity<Map<String,Object>> responseEntity = null;
+		
+		data = userService.saveUser(viewModel);
+				
+		if (data.get("responseCode").equals("412")) {
+			responseEntity = new ResponseEntity<Map<String,Object>>(data, HttpStatus.PRECONDITION_FAILED);
+		}else {
+			responseEntity = new ResponseEntity<Map<String,Object>>(data, HttpStatus.OK);
+		}
+		return responseEntity;
+	}
 	
 	@GetMapping("/get_approved_posts")
 	public ResponseEntity<Map<String, Object>> getAllApprovedPost() {
@@ -102,6 +121,40 @@ public class RestUserController {
 		ResponseEntity<Map<String,Object>> responseEntity = null;
 		
 		data = blogService.savePost(viewModel);
+				
+		if (data.get("responseCode").equals("412")) {
+			responseEntity = new ResponseEntity<Map<String,Object>>(data, HttpStatus.PRECONDITION_FAILED);
+		}else {
+			responseEntity = new ResponseEntity<Map<String,Object>>(data, HttpStatus.OK);
+		}
+		return responseEntity;
+	}
+	
+	//------ Required body post id : {"ids":[]}
+	@PostMapping("/like_post")
+	public ResponseEntity<Map<String, Object>> likePost(@RequestBody CommonRequestViewModel viewModel) {
+		
+		Map<String, Object> data = new HashMap<>();
+		ResponseEntity<Map<String,Object>> responseEntity = null;
+		
+		data = blogService.likesDislikes(viewModel, "LIKE");
+				
+		if (data.get("responseCode").equals("412")) {
+			responseEntity = new ResponseEntity<Map<String,Object>>(data, HttpStatus.PRECONDITION_FAILED);
+		}else {
+			responseEntity = new ResponseEntity<Map<String,Object>>(data, HttpStatus.OK);
+		}
+		return responseEntity;
+	}
+	
+	//------ Required body post id : {"ids":[]}
+	@PostMapping("/dislike_post")
+	public ResponseEntity<Map<String, Object>> dislikePost(@RequestBody CommonRequestViewModel viewModel) {
+		
+		Map<String, Object> data = new HashMap<>();
+		ResponseEntity<Map<String,Object>> responseEntity = null;
+		
+		data = blogService.likesDislikes(viewModel, "DISLIKE");
 				
 		if (data.get("responseCode").equals("412")) {
 			responseEntity = new ResponseEntity<Map<String,Object>>(data, HttpStatus.PRECONDITION_FAILED);
