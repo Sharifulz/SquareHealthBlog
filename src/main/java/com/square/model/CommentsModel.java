@@ -1,5 +1,7 @@
 package com.square.model;
 
+import java.sql.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -27,7 +29,9 @@ public class CommentsModel {
 	@Column(name = "post_id")
 	private int postId;
 
-		
+	@Column(name = "comments_date")
+	private Date commentsDate;
+	
 	public int getId() {
 		return id;
 	}
@@ -59,6 +63,14 @@ public class CommentsModel {
 
 	public void setPostId(int postId) {
 		this.postId = postId;
+	}
+
+	public Date getCommentsDate() {
+		return commentsDate;
+	}
+
+	public void setCommentsDate(Date commentsDate) {
+		this.commentsDate = commentsDate;
 	}
 
 	public CommentsModel() {}

@@ -15,6 +15,7 @@ import com.square.model.BlogPostModel;
 import com.square.payload.CommonRequestViewModel;
 import com.square.service.IAdminService;
 import com.square.service.IBlogService;
+import com.square.service.ICommentsService;
 
 @RestController
 @RequestMapping("/admin_api")
@@ -25,6 +26,9 @@ public class RestAdminController {
 
 	@Autowired
 	IBlogService blogService;
+	
+	@Autowired
+	ICommentsService commentService;
 	
 	/*-----------
 	Top Features: 
@@ -136,6 +140,38 @@ public class RestAdminController {
 			responseEntity = new ResponseEntity<Map<String,Object>>(data, HttpStatus.PRECONDITION_FAILED);
 			return responseEntity;
 		}
+				
+		if (data.get("responseCode").equals("412")) {
+			responseEntity = new ResponseEntity<Map<String,Object>>(data, HttpStatus.PRECONDITION_FAILED);
+		}else {
+			responseEntity = new ResponseEntity<Map<String,Object>>(data, HttpStatus.OK);
+		}
+		return responseEntity;
+	}
+	
+	@PostMapping("/post_comments")
+	public ResponseEntity<Map<String, Object>> saveComments(@RequestBody CommonRequestViewModel viewModel) {
+		
+		Map<String, Object> data = new HashMap<>();
+		ResponseEntity<Map<String,Object>> responseEntity = null;
+		
+		data = commentService.saveComments(viewModel);
+				
+		if (data.get("responseCode").equals("412")) {
+			responseEntity = new ResponseEntity<Map<String,Object>>(data, HttpStatus.PRECONDITION_FAILED);
+		}else {
+			responseEntity = new ResponseEntity<Map<String,Object>>(data, HttpStatus.OK);
+		}
+		return responseEntity;
+	}
+	
+	@PostMapping("/save_post")
+	public ResponseEntity<Map<String, Object>> savePost(@RequestBody CommonRequestViewModel viewModel) {
+		
+		Map<String, Object> data = new HashMap<>();
+		ResponseEntity<Map<String,Object>> responseEntity = null;
+		
+		data = blogService.savePost(viewModel);
 				
 		if (data.get("responseCode").equals("412")) {
 			responseEntity = new ResponseEntity<Map<String,Object>>(data, HttpStatus.PRECONDITION_FAILED);

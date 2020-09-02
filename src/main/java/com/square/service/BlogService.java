@@ -16,6 +16,7 @@ import com.square.dao.ICommentDao;
 import com.square.dao.IUsersDao;
 import com.square.model.BlogPostModel;
 import com.square.model.UsersModel;
+import com.square.payload.CommonRequestViewModel;
 
 @Service
 public class BlogService implements IBlogService {
@@ -112,6 +113,132 @@ public class BlogService implements IBlogService {
 			}
 		} catch (Exception e) {data.put("result", "failure");}
 		
+		
+		return data;
+	}
+
+	@Override
+	public Map<String, Object> getByIsApprovedTrueOrderByPostDateDesc() {
+		Map<String, Object> data = new HashMap<>();
+		List<String> message = new ArrayList<>();
+		List<BlogPostModel> approvedBlogs = null;
+		String userName = commonService.getCurrentUser();
+		
+		UsersModel admin = null;
+		UsersModel user = userDao.findByUserName(userName).get();
+		if (user.getRoles().equals("ROLE_ADMIN") || user.getRoles().equals("ROLE_USER")) {
+			try {
+				approvedBlogs = blogDao.findByIsApprovedTrueOrderByPostDateDesc();
+				if (approvedBlogs!=null && approvedBlogs.size()>0) {
+					message.add("Successfully received all approved posts.");
+					data.put("result", "successful");
+					data.put("data", approvedBlogs);
+					data.put("message", message);
+					data.put("responseCode", "200");
+				}
+			} catch (Exception e) {
+				message.add("Failed to get approved post "+ e.getLocalizedMessage());
+				data.put("result", "failure");
+				data.put("data", "");
+				data.put("message", message);
+				data.put("responseCode", "412");
+				}
+			
+		}else {
+			message.add("You are not assigned to any role yet.");
+			data.put("result", "failure");
+			data.put("data", "");
+			data.put("message", message);
+			data.put("responseCode", "412");
+		}
+		
+		
+		return data;
+	}
+
+	@Override
+	public Map<String, Object> removePost(CommonRequestViewModel viewModel) {
+		Map<String, Object> data = new HashMap<>();
+		List<String> message = new ArrayList<>();
+		BlogPostModel blog = null;
+		String userName = commonService.getCurrentUser();
+		UsersModel user = userDao.findByUserName(userName).get();
+		
+		if (user.getRoles().equals("ROLE_ADMIN") || user.getRoles().equals("ROLE_USER")) {
+			blog = blogDao.findById(Integer.parseInt(viewModel.getIds()[0]));
+			if (blog!=null) {
+				if (blog.getUserName().equals(userName)) {
+					//------------- Delete comment
+					int deleteCommentsRow = commentsDao.deleteCorrespondingCommentsByPostId(Integer.parseInt(viewModel.getIds()[0]));
+					try {
+						blogDao.delete(blog);
+						message.add("Successfully deleted your post.");
+						data.put("result", "successful");
+						data.put("data", "");
+						data.put("message", message);
+						data.put("responseCode", "200");
+						
+					} catch (Exception e) {}
+					
+					
+				}else {
+					message.add("You are not authorised to delete this post");
+					data.put("result", "failure");
+					data.put("data", "");
+					data.put("message", message);
+					data.put("responseCode", "412");
+				}
+			}
+		}else {
+			message.add("You are not assigned to any role yet.");
+			data.put("result", "failure");
+			data.put("data", "");
+			data.put("message", message);
+			data.put("responseCode", "412");
+		}
+		return data;
+	}
+
+	@Override
+	public Map<String, Object> savePost(CommonRequestViewModel viewModel) {
+		Map<String, Object> data = new HashMap<>();
+		List<String> message = new ArrayList<>();
+		String userName = commonService.getCurrentUser();
+		
+		//---------- Get user details 
+		UsersModel user = userDao.findByUserName(userName).get();
+		
+		BlogPostModel blogPost = null;
+		if (viewModel.getPostDescription()!=null) {
+			blogPost = new BlogPostModel();
+			blogPost.setUserName(userName);
+			blogPost.setDescription(viewModel.getPostDescription());
+			blogPost.setPostDate(new Date(System.currentTimeMillis()));
+			
+			if (user.getRoles().equals("ROLE_ADMIN")) {
+				//-------- set is approve as true
+				blogPost.setApproved(true);
+				blogDao.save(blogPost);
+			}else if (user.getRoles().equals("ROLE_USER")) {
+				//-------- set is approve as false
+				blogPost.setApproved(false);
+				blogDao.save(blogPost);
+			}else {
+				message.add("You are not assigned to any role yet.");
+				data.put("result", "failure");
+				data.put("data", "");
+				data.put("message", message);
+				data.put("responseCode", "412");
+			}
+			
+		}else {
+			message.add("No description found");
+			data.put("result", "failure");
+			data.put("data", "");
+			data.put("message", message);
+			data.put("responseCode", "412");
+			return data;
+		}
 		
 		return data;
 	}
