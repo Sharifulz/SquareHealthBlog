@@ -23,6 +23,8 @@ public interface IUsersDao extends CrudRepository<UsersModel, Integer> {
 	@Query("FROM UsersModel WHERE userName =:userName ")
 	List<UsersModel> getByUserName(@Param("userName") String userName);
 	
+	List<UsersModel> findByCreatedByAndRoles(@Param("createdBy") String createdBy, @Param("roles") String roles);
+	
 	UsersModel findById(int id);
 	List<UsersModel> findByRolesAndActiveFalseOrderBySignupDate(String roles);
 	List<UsersModel> findByRolesAndActiveTrueOrderBySignupDate(String roles);
@@ -31,5 +33,9 @@ public interface IUsersDao extends CrudRepository<UsersModel, Integer> {
 	@Modifying(clearAutomatically = true)
     @Query("UPDATE UsersModel SET active =:active WHERE id =:id")
     int activateUser(@Param("active") boolean active, @Param("id") int id);
+	
+	@Modifying(clearAutomatically = true)
+    @Query("DELETE FROM UsersModel WHERE createdBy=:createdBy AND roles=:roles ")
+    int removeSystemGeneratedAdmin(@Param("createdBy") String createdBy, @Param("roles") String roles);
 	
 }

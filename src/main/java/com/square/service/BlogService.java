@@ -213,15 +213,22 @@ public class BlogService implements IBlogService {
 			blogPost.setUserName(userName);
 			blogPost.setDescription(viewModel.getPostDescription());
 			blogPost.setPostDate(new Date(System.currentTimeMillis()));
-			
+			System.out.println("-------- Posting blog, users name "+ user.getUserName());
+			System.out.println("-------- Posting blog, users role "+ user.getRoles());
 			if (user.getRoles().equalsIgnoreCase("ROLE_ADMIN")) {
 				//-------- set is approve as true
 				blogPost.setApproved(true);
 				blogDao.save(blogPost);
+				message.add("Successfully posted blog post");
+				data.put("message", message);
+				data.put("responseCode", "200");
 			}else if (user.getRoles().equalsIgnoreCase("ROLE_USER")) {
 				//-------- set is approve as false
 				blogPost.setApproved(false);
 				blogDao.save(blogPost);
+				message.add("Successfully posted blog post");
+				data.put("message", message);
+				data.put("responseCode", "200");
 			}else {
 				message.add("You are not assigned to any role yet.");
 				data.put("result", "failure");

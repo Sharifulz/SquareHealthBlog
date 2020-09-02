@@ -10,7 +10,7 @@ public class CommonRequestViewModel {
 	
 	private String postDescription;
 	
-	private String ids[];
+	private String[] ids;
 
 	public String getUserName() {
 		return userName;

@@ -25,7 +25,7 @@ public class UserController {
 	ICommonService commonService;
 	
 	@GetMapping("/user")
-	public ModelAndView user() {
+	public ModelAndView user() {   
 		
 		ModelAndView mv  = new ModelAndView();
 		String userName = commonService.getCurrentUser();
