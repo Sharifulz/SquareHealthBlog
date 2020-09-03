@@ -124,7 +124,12 @@ public class BlogService implements IBlogService {
 		List<BlogPostModel> approvedBlogs = null;
 		String userName = commonService.getCurrentUser();
 		
-		UsersModel user = userDao.findByUserName(userName).get();
+		UsersModel user = null;
+		
+		try {
+			user = userDao.findByUserName(userName).get();
+		} catch (Exception e) {}
+		
 		if (user.getRoles().equalsIgnoreCase("ROLE_ADMIN") || user.getRoles().equalsIgnoreCase("ROLE_USER")) {
 			try {
 				approvedBlogs = blogDao.findByIsApprovedTrueOrderByPostDateDesc();
@@ -161,7 +166,13 @@ public class BlogService implements IBlogService {
 		List<String> message = new ArrayList<>();
 		BlogPostModel blog = null;
 		String userName = commonService.getCurrentUser();
-		UsersModel user = userDao.findByUserName(userName).get();
+		UsersModel user = null;
+		
+		try {
+			user = userDao.findByUserName(userName).get();
+		} catch (Exception e) {
+			
+		}
 		
 		if (user.getRoles().equalsIgnoreCase("ROLE_ADMIN") || user.getRoles().equalsIgnoreCase("ROLE_USER")) {
 			blog = blogDao.findById(Integer.parseInt(viewModel.getIds()[0]));
@@ -177,7 +188,9 @@ public class BlogService implements IBlogService {
 						data.put("message", message);
 						data.put("responseCode", "200");
 						
-					} catch (Exception e) {}
+					} catch (Exception e) {
+						
+					}
 					
 					
 				}else {
@@ -203,48 +216,60 @@ public class BlogService implements IBlogService {
 		Map<String, Object> data = new HashMap<>();
 		List<String> message = new ArrayList<>();
 		String userName = commonService.getCurrentUser();
-		
-		//---------- Get user details 
-		UsersModel user = userDao.findByUserName(userName).get();
-		
+		UsersModel user = null;
 		BlogPostModel blogPost = null;
-		if (viewModel.getPostDescription()!=null) {
-			blogPost = new BlogPostModel();
-			blogPost.setUserName(userName);
-			blogPost.setDescription(viewModel.getPostDescription());
-			blogPost.setPostDate(new Date(System.currentTimeMillis()));
-			System.out.println("-------- Posting blog, users name "+ user.getUserName());
-			System.out.println("-------- Posting blog, users role "+ user.getRoles());
-			if (user.getRoles().equalsIgnoreCase("ROLE_ADMIN")) {
-				//-------- set is approve as true
-				blogPost.setApproved(true);
-				blogDao.save(blogPost);
-				message.add("Successfully posted blog post");
-				data.put("message", message);
-				data.put("responseCode", "200");
-			}else if (user.getRoles().equalsIgnoreCase("ROLE_USER")) {
-				//-------- set is approve as false
-				blogPost.setApproved(false);
-				blogDao.save(blogPost);
-				message.add("Successfully posted blog post");
-				data.put("message", message);
-				data.put("responseCode", "200");
-			}else {
-				message.add("You are not assigned to any role yet.");
-				data.put("result", "failure");
-				data.put("data", "");
-				data.put("message", message);
-				data.put("responseCode", "412");
+		//---------- Get user details 
+		try {
+			user = userDao.findByUserName(userName).get();
+			if (user!=null) {
+				if (viewModel.getPostDescription()!=null) {
+					blogPost = new BlogPostModel();
+					blogPost.setUserName(userName);
+					blogPost.setDescription(viewModel.getPostDescription());
+					blogPost.setPostDate(new Date(System.currentTimeMillis()));
+					System.out.println("-------- Posting blog, users name "+ user.getUserName());
+					System.out.println("-------- Posting blog, users role "+ user.getRoles());
+					if (user.getRoles().equalsIgnoreCase("ROLE_ADMIN")) {
+						//-------- set is approve as true
+						blogPost.setApproved(true);
+						blogDao.save(blogPost);
+						message.add("Successfully posted blog post");
+						data.put("message", message);
+						data.put("responseCode", "200");
+					}else if (user.getRoles().equalsIgnoreCase("ROLE_USER")) {
+						//-------- set is approve as false
+						blogPost.setApproved(false);
+						blogDao.save(blogPost);
+						message.add("Successfully posted blog post");
+						data.put("message", message);
+						data.put("responseCode", "200");
+					}else {
+						message.add("You are not assigned to any role yet.");
+						data.put("result", "failure");
+						data.put("data", "");
+						data.put("message", message);
+						data.put("responseCode", "412");
+					}
+					
+				}else {
+					message.add("No description found");
+					data.put("result", "failure");
+					data.put("data", "");
+					data.put("message", message);
+					data.put("responseCode", "412");
+					return data;
+				}
 			}
-			
-		}else {
-			message.add("No description found");
+		} catch (Exception e) {
+			message.add("Exception "+ e.getLocalizedMessage());
 			data.put("result", "failure");
 			data.put("data", "");
 			data.put("message", message);
 			data.put("responseCode", "412");
-			return data;
 		}
+		
+		
+		
 		
 		return data;
 	}
@@ -255,32 +280,45 @@ public class BlogService implements IBlogService {
 		List<String> message = new ArrayList<>();
 		BlogPostModel blog = null;
 		String userName = commonService.getCurrentUser();
-		UsersModel user = userDao.findByUserName(userName).get();
+		UsersModel user = null;
+		
+		try {
+			user = userDao.findByUserName(userName).get();
+		} catch (Exception e) {}
 		
 		if (user.getRoles().equalsIgnoreCase("ROLE_ADMIN") || user.getRoles().equalsIgnoreCase("ROLE_USER")) {
 			if (viewModel.getIds().length>0) {
 				blog = blogDao.findById(Integer.parseInt(viewModel.getIds()[0]));
-				if (reactionType.equalsIgnoreCase("LIKE")) {
-					blog.setLikes(blog.getLikes()+1);
-				}else if (reactionType.equalsIgnoreCase("DISLIKES")) {
-					blog.setDislikes(blog.getDislikes()+1);
-				}
-				try {
-					BlogPostModel blogg = blogDao.save(blog);
-					message.add("Successfully reacted on posts");
-					data.put("result", "successful");
-					data.put("data", blogg);
-					data.put("message", message);
-					data.put("responseCode", "200");
-					
-				} catch (Exception e) {
-					message.add("Failed to get approved post "+ e.getLocalizedMessage());
+				if (blog!=null && blog.isApproved()) {
+					if (reactionType.equalsIgnoreCase("LIKE")) {
+						blog.setLikes(blog.getLikes()+1);
+					}else if (reactionType.equalsIgnoreCase("DISLIKES")) {
+						blog.setDislikes(blog.getDislikes()+1);
+					}
+					try {
+						BlogPostModel blogg = blogDao.save(blog);
+						message.add("Successfully reacted on posts");
+						data.put("result", "successful");
+						data.put("data", blogg);
+						data.put("message", message);
+						data.put("responseCode", "200");
+						
+					} catch (Exception e) {
+						message.add("Failed to get approved post "+ e.getLocalizedMessage());
+						data.put("result", "failure");
+						data.put("data", "");
+						data.put("message", message);
+						data.put("responseCode", "412");
+						
+					}
+				}else {
+					message.add("This post is not approved yet.");
 					data.put("result", "failure");
 					data.put("data", "");
 					data.put("message", message);
 					data.put("responseCode", "412");
-					
 				}
+				
 				
 			}else {
 				message.add("No Id found to react.");

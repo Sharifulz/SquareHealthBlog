@@ -42,7 +42,6 @@ public class UserController {
 		System.out.println("Inside user register");
 		ModelAndView mv  = new ModelAndView();
 		Map<String, Object> data = new HashMap<>();
-		System.out.println("SAVING USER ------------------- >Username: "+ user.getUserName() + " Full Name "+ user.getFullName() +" Password : " + user.getPassword());
 		data = userService.saveUser(user, "USER");
 		mv.setViewName("index");
 		mv.addObject("currentUser",  data.get("currentUser"));

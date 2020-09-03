@@ -54,13 +54,6 @@ public class UserService implements IUserService {
 		try {
 			approvedPosts = blogPostDao.findByIsApprovedTrueOrderByPostDateDesc();
 			if (approvedPosts!=null && approvedPosts.size()>0) {
-				
-				for (BlogPostModel blogPostModel : approvedPosts) {
-					for (CommentsModel comments : blogPostModel.getCommentsList()) {
-						System.out.println(comments.getComments() +" -----------------------------------");
-					}
-				}
-				
 				data.put("approvedPosts", approvedPosts);
 			}else { data.put("approvedPosts", new ArrayList<>()); }
 		} catch (Exception e) {e.printStackTrace();}
@@ -78,7 +71,6 @@ public class UserService implements IUserService {
 		List<BlogPostModel> approvedPosts = null;
 		UsersModel savedUser = null;
 		//String pwd = null;
-		System.out.println("SAVING USER ------------------- >Username: "+ unsavedUser.getUserName() + " Full Name "+ unsavedUser.getFullName() +" Password : " + unsavedUser.getPassword());
 		String userName = commonService.getCurrentUser();
 		UsersModel currentUser = null;
 		boolean isUserFound = true;
@@ -88,10 +80,7 @@ public class UserService implements IUserService {
 		}else {
 			currentUser = userDao.findByUserName(userName).get();
 		}
-		
-		System.out.println("----------------------- What is current users userName "+ userName);
-		
-		
+
 		if (unsavedUser.getUserName()!=null && isUserFound) {
 			//--------- Check if this username already exists?
 			Optional<UsersModel> alreadyEsistsUser = userDao.findByUserName(unsavedUser.getUserName());
