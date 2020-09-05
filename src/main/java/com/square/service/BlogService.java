@@ -274,6 +274,7 @@ public class BlogService implements IBlogService {
 		return data;
 	}
 
+	//--------------- FOR API
 	@Override
 	public Map<String, Object> likesDislikes(CommonRequestViewModel viewModel, String reactionType) {
 		Map<String, Object> data = new HashMap<>();

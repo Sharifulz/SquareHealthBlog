@@ -29,6 +29,7 @@ public class RestUserController {
 	
 	@Autowired
 	IUserService userService;
+	
 	/*-----------
 	Top Features: 
 	

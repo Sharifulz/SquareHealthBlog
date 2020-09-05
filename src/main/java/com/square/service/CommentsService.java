@@ -12,9 +12,11 @@ import org.springframework.stereotype.Service;
 import com.square.common.ICommonService;
 import com.square.dao.IBlogPostDao;
 import com.square.dao.ICommentDao;
+import com.square.dao.ILikesDislikesDao;
 import com.square.dao.IUsersDao;
 import com.square.model.BlogPostModel;
 import com.square.model.CommentsModel;
+import com.square.model.LikesDislikesModel;
 import com.square.model.UsersModel;
 import com.square.payload.CommonRequestViewModel;
 
@@ -33,6 +35,8 @@ public class CommentsService implements ICommentsService {
 	@Autowired
 	ICommonService commonService;
 	
+	@Autowired
+	ILikesDislikesDao likesDislikeDao;
 	
 	@Override
 	public Map<String, Object> saveComments(CommonRequestViewModel viewModel) {
@@ -148,6 +152,7 @@ public class CommentsService implements ICommentsService {
 	}
 
 
+	//--------------- FOR WEB
 	@Override
 	public Map<String, Object> likeDislikePost(int postId, String reactType) {
 		Map<String, Object> data = new HashMap<>();
@@ -156,7 +161,7 @@ public class CommentsService implements ICommentsService {
 		List<BlogPostModel> approvedPosts = null;
 		UsersModel currentUser = null;
 		String userName = commonService.getCurrentUser();
-		
+		currentUser = userDao.findByUserName(userName).get();
 		//--------- Check if this post exists
 		BlogPostModel blog = null;
 		
@@ -164,13 +169,48 @@ public class CommentsService implements ICommentsService {
 			//--------- Check if this post approved
 			blog = blogDao.findById(postId);
 			if (blog!=null) {
+				List<LikesDislikesModel> likesDislikeList = new ArrayList<>();
 				if (blog.isApproved()) {
-					//--------------- add like or dislike count for this post
+					//--------------- what is the action, check if this user has this react for this post
+					LikesDislikesModel likesDislikes = new LikesDislikesModel();
+					likesDislikes.setUserId(currentUser.getId());
+					likesDislikes.setPostId(blog.getId());
+					likesDislikes.setActionDate(new Date(System.currentTimeMillis()));
+					
 					if (reactType.equalsIgnoreCase("LIKE")) {
-						blog.setLikes(blog.getLikes()+1);
+						likesDislikeList = likesDislikeDao.findByUserIdAndPostIdAndAction(currentUser.getId(), blog.getId(), "LIKE");
+						//--------------- if yes remove that liked row
+						if (likesDislikeList.size()>0) {
+							likesDislikeDao.deleteCommentsDetail(currentUser.getId(), blog.getId(), "LIKE");
+						}else { //--------------- if no, let him do the action
+							likesDislikes.setAction("LIKE");
+							LikesDislikesModel likeDislike = likesDislikeDao.save(likesDislikes);
+							if (likeDislike!=null) {
+								blog.setLikes(blog.getLikes()+1);
+							}else {
+								
+							}
+						}
+						
 					}else if(reactType.equalsIgnoreCase("DISLIKE")) {
-						blog.setDislikes(blog.getDislikes()+1);
+						likesDislikeList = likesDislikeDao.findByUserIdAndPostIdAndAction(currentUser.getId(), blog.getId(), "DISLIKE");
+						if (likesDislikeList.size()>0) {
+							likesDislikeDao.deleteCommentsDetail(currentUser.getId(), blog.getId(), "DISLIKE");
+						}else { //--------------- if no, let him do the action
+							likesDislikes.setAction("DILIKE");
+							LikesDislikesModel likeDislike = likesDislikeDao.save(likesDislikes);
+							if (likeDislike!=null) {
+								blog.setDislikes(blog.getDislikes()+1);
+							}else {
+								
+							}
+						}
 					}
+						//----------------- get all the likes and dislikes for this post
+						//----------------- update post rows likes, dislikes for this post
+					
+					//--------------- add like or dislike count for this post
+
 					try {
 						blogDao.save(blog);
 						messages.add("Successfully saved comment and updated comment count "+ postId);
@@ -178,7 +218,7 @@ public class CommentsService implements ICommentsService {
 						errorMessage.add("Unexpected error occures " + e.getLocalizedMessage());
 					}
 					
-					
+					//---------------------------------------------------------------
 				}else {
 					errorMessage.add("Post is not approved yet "+ postId);
 				}
@@ -189,7 +229,7 @@ public class CommentsService implements ICommentsService {
 			errorMessage.add("Unexpected error occures " + e.getLocalizedMessage());
 		}
 		
-		currentUser = userDao.findByUserName(userName).get();
+		
 		approvedPosts = blogDao.findByIsApprovedTrueOrderByPostDateDesc();
 		data.put("currentUser", currentUser);
 		data.put("approvedPosts", approvedPosts);

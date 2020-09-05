@@ -160,8 +160,10 @@ body {
 	<div class="row mb-2">
 		<div class="col-md-3"></div>
 		<div class="col-md-6">
+		
 		<div class="card" style="width: 34rem;">
 		  <i class="fa fa-twitter" style="font-size: 5rem; text-align: center"></i>
+		  
 		  <div class="card-body">
 		    <span class="card-title"><i class="fa fa-user mr-2"></i> ${approvedPost.userName}</span>
 		    <span class="card-title"><i class="fa fa-id-badge mr-2"></i>  ${approvedPost.id}</span>
@@ -179,6 +181,7 @@ body {
 			  	 <span><a href="/blog/remove_by_user/${approvedPost.id}" class="btn btn-danger"><i class="fa fa-trash" style="text-align: center"></i></a></span>  
 			</c:if>  
 		    </div>
+		    
 		    <form action="/comment/comment_on_post/${approvedPost.id}" method="post">
 			  <div class="form-group">
 			    <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter your comment" name="comments">
@@ -187,6 +190,7 @@ body {
 			</form>
 		  </div>
 		</div>
+		
 		</div>
 		<div class="col-md-3"></div>
 	</div>

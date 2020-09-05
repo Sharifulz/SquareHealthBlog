@@ -182,37 +182,37 @@ public class RestAdminController {
 	}
 	
 	//------ Required body post id : {"ids":[]}
-		@PostMapping("/like_post")
-		public ResponseEntity<Map<String, Object>> likePost(@RequestBody CommonRequestViewModel viewModel) {
-			
-			Map<String, Object> data = new HashMap<>();
-			ResponseEntity<Map<String,Object>> responseEntity = null;
-			
-			data = blogService.likesDislikes(viewModel, "LIKE");
-					
-			if (data.get("responseCode").equals("412")) {
-				responseEntity = new ResponseEntity<Map<String,Object>>(data, HttpStatus.PRECONDITION_FAILED);
-			}else {
-				responseEntity = new ResponseEntity<Map<String,Object>>(data, HttpStatus.OK);
-			}
-			return responseEntity;
-		}
+	@PostMapping("/like_post")
+	public ResponseEntity<Map<String, Object>> likePost(@RequestBody CommonRequestViewModel viewModel) {
 		
-		//------ Required body post id : {"ids":[]}
-		@PostMapping("/dislike_post")
-		public ResponseEntity<Map<String, Object>> dislikePost(@RequestBody CommonRequestViewModel viewModel) {
-			
-			Map<String, Object> data = new HashMap<>();
-			ResponseEntity<Map<String,Object>> responseEntity = null;
-			
-			data = blogService.likesDislikes(viewModel, "DISLIKE");
-					
-			if (data.get("responseCode").equals("412")) {
-				responseEntity = new ResponseEntity<Map<String,Object>>(data, HttpStatus.PRECONDITION_FAILED);
-			}else {
-				responseEntity = new ResponseEntity<Map<String,Object>>(data, HttpStatus.OK);
-			}
-			return responseEntity;
+		Map<String, Object> data = new HashMap<>();
+		ResponseEntity<Map<String,Object>> responseEntity = null;
+		
+		data = blogService.likesDislikes(viewModel, "LIKE");
+				
+		if (data.get("responseCode").equals("412")) {
+			responseEntity = new ResponseEntity<Map<String,Object>>(data, HttpStatus.PRECONDITION_FAILED);
+		}else {
+			responseEntity = new ResponseEntity<Map<String,Object>>(data, HttpStatus.OK);
 		}
+		return responseEntity;
+	}
+		
+	//------ Required body post id : {"ids":[]}
+	@PostMapping("/dislike_post")
+	public ResponseEntity<Map<String, Object>> dislikePost(@RequestBody CommonRequestViewModel viewModel) {
+		
+		Map<String, Object> data = new HashMap<>();
+		ResponseEntity<Map<String,Object>> responseEntity = null;
+		
+		data = blogService.likesDislikes(viewModel, "DISLIKE");
+				
+		if (data.get("responseCode").equals("412")) {
+			responseEntity = new ResponseEntity<Map<String,Object>>(data, HttpStatus.PRECONDITION_FAILED);
+		}else {
+			responseEntity = new ResponseEntity<Map<String,Object>>(data, HttpStatus.OK);
+		}
+		return responseEntity;
+	}
 	
 }

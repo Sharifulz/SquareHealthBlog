@@ -27,6 +27,10 @@ public interface IBlogPostDao extends JpaRepository<BlogPostModel, Integer> {
     int approveBlog(@Param("isApproved") boolean isApproved, @Param("id") int id);
 	
 	@Modifying(clearAutomatically = true)
+    @Query("UPDATE BlogPostModel SET likes =:likes , dislikes=:dislikes WHERE id =:id")
+    int updateLikesDislikesCount(@Param("likes") int likes, @Param("dislikes") int dislikes, @Param("id") int id);
+	
+	@Modifying(clearAutomatically = true)
     @Query("DELETE FROM BlogPostModel WHERE id=:id")
     int removePost(@Param("id") int id);
 }

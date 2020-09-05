@@ -1,6 +1,6 @@
 package com.square.payload;
 
-public class AuthenticationRequest {
+public class JwtRequestBody {
 	 	public String userName;
 	    public String password;
 

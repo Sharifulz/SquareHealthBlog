@@ -2,14 +2,17 @@ package com.square.payload;
 
 import java.util.Date;
 
-public class AuthenticationResponse {
+public class JwtResponseBody {
 	
 	public String token;
 	
-	public AuthenticationResponse(String token,Date date){
+	public Date date;
+	
+	public JwtResponseBody(String token,Date date){
         this.token=token;
+        this.date=date;
     }
-    public AuthenticationResponse(String token){
+    public JwtResponseBody(String token){
         this.token=token;
     }
     public String getToken() {

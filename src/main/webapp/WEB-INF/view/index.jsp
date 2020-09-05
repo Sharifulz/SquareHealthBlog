@@ -94,21 +94,14 @@ body {
 </head>
 <body>
 
-<%-- <c:forEach items="${posts}" var="user">
-	<h1> ${user.userName}</h1> 
-	<c:forEach items="${user.postsList}" var="post">
-		<h5>${post.description}</h5>
-	</c:forEach>
-	<h5></h5>
-</c:forEach> --%>
 <div class="container">
 	<div class="row p-2">
 		<div class="col-md-3"></div>
 		<div class="col-md-6">
 			<fieldset style="margin: 0 auto; text-align: center;">
-			<span class="badge badge-danger" style="padding: 15px;">HOME PAGE</span> 
-			<a href="/user" class="badge badge-primary" style="padding: 15px;">USER PAGE</a>
-			<a href="/admin" class="badge badge-primary" style="padding: 15px;">ADMIN PAGE</a>
+			<span class="badge badge-danger" style="padding: 15px;">BLOG HOME</span> 
+			<a href="/user" class="badge badge-primary" style="padding: 15px;">BLOGGERS</a>
+			<a href="/admin" class="badge badge-primary" style="padding: 15px;">ADMIN CONTROLS</a>
 			<a href="#myModal" class="badge badge-primary" data-toggle="modal" style="padding: 15px;">SIGN IN</a>
 		</fieldset>
 		</div>
@@ -135,25 +128,31 @@ body {
 </c:forEach>
 
 <div class="container">
-	<c:forEach items="${approvedPosts}" var="post">
+	<c:forEach items="${approvedPosts}" var="approvedPost">
 	<div class="row mb-2">
 		<div class="col-md-3"></div>
 		<div class="col-md-6">
-		<div class="card" style="width: 30rem;">
+		
+		<div class="card" style="width: 34rem;">
 		  <i class="fa fa-twitter" style="font-size: 5rem; text-align: center"></i>
+		  
 		  <div class="card-body">
-		    <span class="card-title" style="font-weight: bold;">User: ${post.userName}</span>
-		    <p class="card-text" style="font-size: 25px;">Post: ${post.description}</p>
-		    <c:forEach items="${post.commentsList}" var="comments">
-				<p>Comments: ${comments.comments}</p>
+		    <span class="card-title"><i class="fa fa-user mr-2"></i> ${approvedPost.userName}</span>
+		    <span class="card-title"><i class="fa fa-id-badge mr-2"></i>  ${approvedPost.id}</span>
+		    <span class="card-title"><i class="fa fa-calendar mr-2"></i>  ${approvedPost.postDate}</span>
+		    <h2>${approvedPost.description}</h2>
+		   
+		    <c:forEach items="${approvedPost.commentsList}" var="comments">
+				<p><i class="fa fa-comments mr-2"></i> ${comments.comments}</p>
 			</c:forEach>
-		    <div style="text-align: center; margin-bottom: 10px;">
-		    	 <a href="#" class="btn btn-success"><i class="fa fa-thumbs-up" style="text-align: center">${post.likes}</i></a>
-			    <a href="#" class="btn btn-danger"><i class="fa fa-thumbs-down" style="text-align: center">${post.dislikes}</i></a>
-			    <a href="#" class="btn btn-warning"><i class="fa fa-comment" style="text-align: center">${post.comments}</i></a>
+		    <div style="text-align: right; margin-bottom: 10px;">
+		    	 <a href="/like/${approvedPost.id}" class="btn btn-dark"><i class="fa fa-thumbs-up" style="text-align: center">${approvedPost.likes}</i></a>
+			    <a href="/dislike/${approvedPost.id}" class="btn btn-dark"><i class="fa fa-thumbs-down" style="text-align: center">${approvedPost.dislikes}</i></a>
+			    <a href="#" class="btn btn-dark"><i class="fa fa-comment" style="text-align: center">${approvedPost.comments}</i></a> 
 		    </div>
 		  </div>
 		</div>
+		
 		</div>
 		<div class="col-md-3"></div>
 	</div>
